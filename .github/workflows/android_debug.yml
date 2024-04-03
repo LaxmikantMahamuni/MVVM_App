@@ -24,7 +24,7 @@ jobs:
     - name: Decode secrets file
       env:
         MAP_SECRETS_PROPERTIES: ${{ secrets.MAPS_API_KEY }}
-      run: echo "${MAP_SECRETS_PROPERTIES///}" | base64 -d > ./map_secrets.properties
+      run: echo "${MAP_SECRETS_PROPERTIES}" | base64 --decode > ./map_secrets.properties
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
