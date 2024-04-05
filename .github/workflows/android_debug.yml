@@ -30,7 +30,7 @@ jobs:
       run: |
         echo "******************* Copy Secrets  ************************"
         # Change permission and run script
-        chmod +x ./Scripts/decrypt_firebase_secrets.sh
+        chmod +x ./scripts/decrypt_firebase_secrets.sh
         ./scripts/decrypt_firebase_secrets.sh ${{ secrets.DEBUG_GOOGLE_SERVICES_JSON }} debug
       shell: bash
 
