@@ -2,7 +2,6 @@ name: Android Debug CICD
 
 on:
   push:
-    branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
@@ -25,6 +24,15 @@ jobs:
       env:
         MAP_SECRETS_PROPERTIES: ${{ secrets.MAPS_API_KEY }}
       run: echo "${MAP_SECRETS_PROPERTIES}" | base64 --decode > ./map_secrets.properties
+
+    - name: Copy Certs
+      id: copy-certs
+      run: |
+        echo "******************* Copy Secrets  ************************"
+        # Change permission and run script
+        chmod +x ./Scripts/decrypt_firebase_secrets.sh
+        ./Scripts/decrypt_firebase_secrets.sh ${{ secrets.DEBUG_GOOGLE_SERVICES_JSON }} debug
+      shell: bash
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
