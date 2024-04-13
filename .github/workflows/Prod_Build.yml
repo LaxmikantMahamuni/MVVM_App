@@ -37,9 +37,9 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      ## Build the project and generate APK with Gradle
-      #      - name: Build & Generate app APK
-      #        run: ./gradlew assembleRelease --stacktrace
+      # Build the project and generate APK with Gradle
+      - name: Build & Generate app APK
+        run: ./gradlew assembleRelease --stacktrace
 
       ## Sign artifact##
       #      - name: Sign artifact

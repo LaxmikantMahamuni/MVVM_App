@@ -19,3 +19,5 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+# You can specify any path and filename.
+-printconfiguration ../tempo/full-r8-config.txt
