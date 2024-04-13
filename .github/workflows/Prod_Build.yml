@@ -29,28 +29,12 @@ jobs:
           cache: gradle
 
       ## Make Gradle Executable
-      - name: Setup Android SDK
-        run: |
-          ${ANDROID_SDK_ROOT}/cmdline-tools/latest/bin/sdkmanager "build-tools;29.0.3"
-
-      ## Make Gradle Executable
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      ## Build the project and generate APK with Gradle
-      #      - name: Build & Generate app APK
-      #        run: ./gradlew assembleRelease --stacktrace
-
-      ## Sign artifact##
-      #      - name: Sign artifact
-      #        id: signArtifact
-      #        uses: r0adkll/sign-android-release@v1
-      #        with:
-      #           releaseDirectory: app/build/outputs/apk/debug
-      #           signingKeyBase64: ${{ secrets.SIGNING_KEY }}
-      #           alias: ${{ secrets.ALIAS }}
-      #           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-      #           keyPassword: ${{ secrets.KEY_PASSWORD }}
+      # Build the project and generate APK with Gradle
+      - name: Build & Generate app APK
+        run: ./gradlew assembleRelease --stacktrace
 
       - uses: r0adkll/sign-android-release@v1
         name: Sign artifact
@@ -58,7 +42,7 @@ jobs:
         id: sign_app
         with:
           releaseDirectory: app/build/outputs/apk/release
-          signingKeyBase64: ${{ secrets.ANDROIDSIGNINGKEY }}
+          signingKeyBase64: ${{ secrets.SIGNING_KEY }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.ANDROID_KEY_STORE_PASSWORD }}
           keyPassword: ${{ secrets.ANDROID_KEY_PASSWORD }}
