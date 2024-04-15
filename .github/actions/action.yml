@@ -8,29 +8,20 @@ inputs:
     description: 'Build Configuration i.e. debug, production, automation'
     required: true
     default: debug
-  product:
-    description: 'Product i.e. Athoc, Alert'
-    required: true
-    default: MapsApp
   buildVersion:
     description: Build Version
     required: true
   buildNumber:
     description: Build Number
     required: true
-  platform:
-    description: 'Platform i.e. Android, iOS'
-    required: true
-    default: Android
+
 runs:
   using: composite
   steps:
     - name: Set Publish Repo
       run: |
-        if [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then
-          echo "PUBLISH_REPO=dev" >> $GITHUB_ENV
-        elif [[ ${GITHUB_REF#refs/heads/} == "release" ]]; then
-          echo "PUBLISH_REPO=release" >> $GITHUB_ENV
+        if [[ ${{ inputs.configuration }} = "release" ]]; then
+          echo "PUBLISH_REPO=prod" >> $GITHUB_ENV
         fi
       shell: bash
 
@@ -44,73 +35,16 @@ runs:
         echo "Build Version: ${{ inputs.buildVersion }}"
       shell: bash
 
-    - name: Set artifact extension
-      run: |-
-        if [[ ${{ inputs.platform }} = "Android" ]]; then
-           echo "ARTIFACT_EXT=apk" >> $GITHUB_ENV
-        else
-           echo "ARTIFACT_EXT=ipa" >> $GITHUB_ENV
-        fi
-      shell: bash
-
-    - name: Set Product
-      run: |-
-        if [[ "${{ inputs.product }}" == "AtHoc" ]]; then
-           echo "PRODUCT=athoc" >> $GITHUB_ENV
-        else
-           echo "PRODUCT=alert" >> $GITHUB_ENV
-        fi
-      shell: bash
-
     - name: Set Configuration
       run: |-
         if [[ ${{ inputs.configuration }} = "Production" ]]; then
            echo "LOWERCASE_CONFIGURATION=production" >> $GITHUB_ENV
-        elif [[ ${{ inputs.configuration }} = "Automation" ]]; then
-           echo "LOWERCASE_CONFIGURATION=automation" >> $GITHUB_ENV
-        else
-           echo "LOWERCASE_CONFIGURATION=debug" >> $GITHUB_ENV
         fi
       shell: bash
-
-    - name: Set Platform
-      run: |-
-        if [[ ${{ inputs.platform }} = "Android" ]]; then
-           echo "LOWERCASE_PLATFORM=android" >> $GITHUB_ENV
-        else
-           echo "LOWERCASE_PLATFORM=ios" >> $GITHUB_ENV
-        fi
-      shell: bash
-
-    - name: Zip Debug Symbol package
-      shell: bash
-      run: |
-        if [[ ${{ inputs.platform }} == "iOS" ]]; then
-            if [[ "${{ inputs.product }}" == "AtHoc" ]]; then
-                cd "iOS/AtHoc.Vanilla.iOS/bin/iPhone/${{ inputs.configuration }}"
-                zip -r "AtHoc.Vanilla.iOS.app.dSYM.zip" "AtHoc.Vanilla.iOS.app.dSYM"
-            else
-                cd "iOS/BB.Alert.iOS/bin/iPhone/${{ inputs.configuration }}"
-                zip -r "BB.Alert.iOS.app.dSYM.zip" "BB.Alert.iOS.app.dSYM"
-            fi
-        fi
 
     - name: Execute JFrog CLI commands (Copy ipa/apk file)
       run: |
         jfrog rt u "${{ inputs.sourcePath }}" "${{ env.PUBLISH_REPO }}/com/blackberry/${{ env.PRODUCT }}/mobile/${{ env.LOWERCASE_CONFIGURATION }}/${{ env.PRODUCT }}_mobile/${{ inputs.buildVersion }}.${{ inputs.buildNumber }}/${{ env.PRODUCT }}_mobile-${{ inputs.buildVersion }}.${{ inputs.buildNumber }}-${{ env.LOWERCASE_PLATFORM }}.${{ env.ARTIFACT_EXT }}"
-      shell: bash
-
-    - name: Execute JFrog CLI commands (copy Debug Symbols )
-      run: |
-        if [[ ${{ inputs.platform }} == "iOS" ]]; then
-            if [[ "${{ inputs.product }}" == "AtHoc" ]]; then
-                jfrog rt u "iOS/AtHoc.Vanilla.iOS/bin/iPhone/${{ inputs.configuration }}/AtHoc.Vanilla.iOS.app.dSYM.zip" "${{ env.PUBLISH_REPO }}/com/blackberry/${{ env.PRODUCT }}/mobile/${{ env.LOWERCASE_CONFIGURATION }}/${{ env.PRODUCT }}_mobile/${{ inputs.buildVersion }}.${{ inputs.buildNumber }}/${{ env.PRODUCT }}_mobile-${{ inputs.buildVersion }}.${{ inputs.buildNumber }}-${{ env.LOWERCASE_PLATFORM }}.app.dSYM.zip"
-            else
-                jfrog rt u "iOS/BB.Alert.iOS/bin/iPhone/${{ inputs.configuration }}/BB.Alert.iOS.app.dSYM.zip" "${{ env.PUBLISH_REPO }}/com/blackberry/${{ env.PRODUCT }}/mobile/${{ env.LOWERCASE_CONFIGURATION }}/${{ env.PRODUCT }}_mobile/${{ inputs.buildVersion }}.${{ inputs.buildNumber }}/${{ env.PRODUCT }}_mobile-${{ inputs.buildVersion }}.${{ inputs.buildNumber }}-${{ env.LOWERCASE_PLATFORM }}.app.dSYM.zip"
-            fi
-        else
-            echo "Skip for Android"
-        fi
       shell: bash
 
     - name: Add build Info

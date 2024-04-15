@@ -61,8 +61,6 @@ jobs:
         with:
           sourcePath: ${{ steps.sign_app.outputs.signedReleaseFile }}
           configuration: ${{ github.event.inputs.buildtype }}
-          product: 'MapInAndroid'
           buildVersion: '13.2.15'
           buildNumber: 2215
-          platform: Android
 
