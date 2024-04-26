@@ -2,7 +2,10 @@ package com.wipro.wiproapp.data.model
 
 
 import com.google.gson.annotations.SerializedName
-
+/**
+ * Data class to parse api response into structured way to be used
+ * in throughout the application
+ */
 data class Movie(
     @SerializedName("id")
     val id: Int,

@@ -11,6 +11,10 @@ import com.wipro.wiproapp.repository.MovieRepository
 import com.wipro.wiproapp.viewmodel.MovieListViewModel
 import com.wipro.wiproapp.viewmodel.MovieViewModelFactory
 
+/**
+ * This class is the view where user will se the UI and he/she can
+ * perform operations on it lik button press, text input etc.
+ */
 class MainActivity : AppCompatActivity() {
     private val TAG = "MainActivity"
     private lateinit var binding: ActivityMainBinding
@@ -24,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        //get viewmodel instance using MyViewModelFactory
+        //Get viewmodel instance using MyViewModelFactory
         viewModel =
             ViewModelProvider(this, MovieViewModelFactory(MovieRepository(retrofitService))).get(
                 MovieListViewModel::class.java
@@ -33,6 +37,7 @@ class MainActivity : AppCompatActivity() {
         //set recyclerview adapter
         binding.recyclerview.adapter = adapter
 
+        // Observes the response and update the view accordingly
         viewModel.movieList.observe(this, Observer {
             if (it != null) {
                 Log.d(TAG, "movieList: $it")
@@ -42,10 +47,12 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        // Observes the response and update the view accordingly
         viewModel.errorMessage.observe(this, Observer {
             Log.d(TAG, "errorMessage: $it")
         })
 
+        //Initiate API call
         viewModel.getPopularMovies()
     }
 }

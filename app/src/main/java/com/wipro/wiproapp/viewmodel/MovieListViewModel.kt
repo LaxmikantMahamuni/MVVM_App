@@ -10,10 +10,17 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
+/**
+ * MovieListViewModel is presents the data coming from Repository layer(network/db)
+ * It also takes care of the user generated events on the activity
+ */
 class MovieListViewModel constructor(val movieRepository: MovieRepository) : ViewModel() {
     val movieList = MutableLiveData<List<Movie>>()
     val errorMessage = MutableLiveData<String>()
 
+    /**
+     * Populate Movies from Repository layer
+     */
     fun getPopularMovies() {
         val call: Call<MovieResponse?> = movieRepository.getPopularMovies()
         call.enqueue(object : Callback<MovieResponse?> {
@@ -21,8 +28,7 @@ class MovieListViewModel constructor(val movieRepository: MovieRepository) : Vie
                 call: Call<MovieResponse?>,
                 response: Response<MovieResponse?>
             ) {
-                Log.d("TAG", response.code().toString() + "")
-                Log.d("RESPO", "Response is here ${response.body().toString()}")
+                Log.d("RESPONSE_TAG", "Response: ${response.body().toString()}")
                 movieList.postValue(response.body()?.movies)
             }
 

@@ -9,16 +9,34 @@ import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Header
 
-
+/**
+ * RetrofitService is a network layer interface create the HTTPApiClient object in an companion object to call the APIs
+ * It takes care of network API calls to be called desired source
+ */
 interface RetrofitService {
 
+    /**
+     * Method to call the particular endpoint with if any inputs are there
+     */
     @GET("3/movie/popular")
     fun getPopularMovies(): Call<MovieResponse?>
 
+    /**
+     * Companion object and it's members can be used from multiple places with
+     * its static reference
+     */
     companion object{
         var retrofitService: RetrofitService? = null
 
+        /**
+         * This method returns the Retrofit client reference to initiate the API calls
+         */
         fun getInstance(): RetrofitService {
+
+            /**
+             * This Okhttp client is used to add an interceptor which has ability to deal with
+             * Authorization bearer token to used while API call for authentication
+             */
             val client = OkHttpClient.Builder()
                 .addInterceptor(TokenInterceptor())
                 .build()
@@ -35,8 +53,5 @@ interface RetrofitService {
             }
             return retrofitService!!
         }
-
-        const val API_KEY = "dabc075c4f858529a867c5eace88cb43"
-        const val ACCESS_TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJkYWJjMDc1YzRmODU4NTI5YTg2N2M1ZWFjZTg4Y2I0MyIsInN1YiI6IjY0ZWIxY2FiYzVjMWVmMDBhZDNlMjkyOSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.NTrq00J5L8BhDl3o55QAflTzAm6yjY6E3C4VmfnXGaY"
     }
 }
