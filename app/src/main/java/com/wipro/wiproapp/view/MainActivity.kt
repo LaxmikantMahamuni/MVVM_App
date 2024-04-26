@@ -2,6 +2,7 @@ package com.wipro.wiproapp.view
 
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -28,6 +29,8 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.progressbar.visibility = View.VISIBLE
+
         //Get viewmodel instance using MyViewModelFactory
         viewModel =
             ViewModelProvider(this, MovieViewModelFactory(MovieRepository(retrofitService))).get(
@@ -39,6 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         // Observes the response and update the view accordingly
         viewModel.movieList.observe(this, Observer {
+            binding.progressbar.visibility = View.GONE
             if (it != null) {
                 Log.d(TAG, "movieList: $it")
                 adapter.setMovieData(it)
