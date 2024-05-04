@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Wipro_App"
+rootProject.name = "MVVM_App"
 include(":app")
